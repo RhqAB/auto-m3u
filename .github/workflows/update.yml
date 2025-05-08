@@ -1,0 +1,29 @@
+name: Update T Sports M3U
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # প্রতি ৩০ মিনিটে রান হবে
+  workflow_dispatch:  # হাতে করে চালাতেও পারো
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run script to generate m3u
+        run: python generate_m3u.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add tsports_auto.m3u
+          git commit -m "🔄 Auto update m3u with token" || echo "No changes to commit"
+          git push
